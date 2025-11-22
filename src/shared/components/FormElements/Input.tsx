@@ -1,16 +1,18 @@
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 
+import { validate } from "../../util/validators";
 import "./Input.css";
 
 interface props {
   id: string;
   element: "input" | "textarea";
-  type: string;
+  type?: string;
   label: string;
   rows?: number;
   placeholder?: string;
   validators?: any[];
-  errorText?: string;
+  errorText: string;
+  onInput: (id: string, value: string, isValid: boolean) => void;
   //   onChange: (id: string, value: string, isValid: boolean) => void;
 }
 
@@ -20,7 +22,13 @@ const inputReducer = (state: any, action: any) => {
       return {
         ...state,
         value: action.value,
-        isValid: true, //replace with actual validation logic
+        isValid: validate(action.value, action.validators),
+      };
+
+    case "TOUCH":
+      return {
+        ...state,
+        isTouched: true,
       };
     default:
       return state;
@@ -34,19 +42,38 @@ const Input: React.FC<props> = ({
   label,
   rows = 3,
   placeholder,
-  //   validators,
-  errorText = "Please enter a valid title.",
+  validators,
+  errorText,
+  onInput,
   //   onChange,
 }) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: "",
+    isTouched: false,
     isValid: false,
   });
+
+  const { value, isValid } = inputState;
+
+  useEffect(() => {
+    onInput(id, value, isValid);
+    // onChange(id, value, isValid);
+  }, [id, onInput, value, isValid]);
 
   const changeHandler = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    dispatch({ type: "CHANGE", value: event.target.value });
+    dispatch({
+      type: "CHANGE",
+      value: event.target.value,
+      validators: validators,
+    });
+  };
+
+  const touchHandler = () => {
+    dispatch({
+      type: "TOUCH",
+    });
   };
 
   const ele =
@@ -55,27 +82,29 @@ const Input: React.FC<props> = ({
         id={id}
         type={type}
         placeholder={placeholder}
+        onBlur={touchHandler}
         onChange={changeHandler}
-        value={inputState.value}
+        value={value}
       />
     ) : (
       <textarea
         id={id}
         rows={rows}
+        onBlur={touchHandler}
         onChange={changeHandler}
-        value={inputState.value}
+        value={value}
       />
     );
 
   return (
     <div
       className={`form-control ${
-        !inputState.isValid && "form-control--invalid"
+        !isValid && inputState.isTouched && "form-control--invalid"
       }`}
     >
       <label htmlFor={id}>{label}</label>
       {ele}
-      {!inputState.isValid && <p>{errorText}</p>}
+      {!isValid && inputState.isTouched && <p>{errorText}</p>}
     </div>
   );
 };
