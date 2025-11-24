@@ -30,16 +30,16 @@
 ## Project Structure
 
 - `src/` — application source code
-  - `places/` — places pages and components (`PlaceList`, `PlaceItem`, `NewPlace`)
-  - `shared/` — shared UI, navigation, and form elements (e.g., `Map.tsx`, `Modal.tsx`, `Button.js`)
+  - `places/` — places pages and components (`PlaceList.js`, `PlaceItem.js`, `NewPlace.tsx`)
+  - `shared/` — shared UI, navigation, and form elements (e.g., `Map.tsx`, `Modal.tsx`, `Button.tsx`, `Input.tsx`)
   - `user/` — user list and user-places pages
-  - `App.js`, `index.js` — app entry and routing
+  - `App.tsx`, `index.tsx` — app entry and routing
 - `public/` — static assets and HTML
 
 Key files:
 
-- `src/App.js` — main app component and routes
-- `src/index.js` — application bootstrap
+- `src/App.tsx` — main app component and routes
+- `src/index.tsx` — application bootstrap
 - `src/shared/components/UIElements/Map.tsx` — map UI component
 - `src/places/pages/NewPlace.tsx` — new place page (TypeScript)
 

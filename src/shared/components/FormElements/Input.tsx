@@ -13,7 +13,6 @@ interface props {
   validators?: any[];
   errorText: string;
   onInput: (id: string, value: string, isValid: boolean) => void;
-  //   onChange: (id: string, value: string, isValid: boolean) => void;
 }
 
 const inputReducer = (state: any, action: any) => {
@@ -45,7 +44,6 @@ const Input: React.FC<props> = ({
   validators,
   errorText,
   onInput,
-  //   onChange,
 }) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: "",
@@ -57,7 +55,6 @@ const Input: React.FC<props> = ({
 
   useEffect(() => {
     onInput(id, value, isValid);
-    // onChange(id, value, isValid);
   }, [id, onInput, value, isValid]);
 
   const changeHandler = (

@@ -41,6 +41,7 @@ const NewPlace = () => {
     inputs: {
       title: { value: "", isValid: false },
       description: { value: "", isValid: false },
+      address: { value: "", isValid: false },
     },
     isValid: false,
   });
@@ -54,8 +55,14 @@ const NewPlace = () => {
     });
   }, []);
 
+  const placeSubmitHandler = (event: React.FormEvent) => {
+    event.preventDefault();
+    //submit place to backend
+    console.log(formState.inputs);
+  };
+
   return (
-    <form className="place-form">
+    <form className="place-form" onSubmit={placeSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -64,7 +71,6 @@ const NewPlace = () => {
         validators={[VALIDATOR_REQUIRE()]}
         errorText="Please enter a valid title."
         onInput={inputHandler}
-        // onChange={() => {}}
       />
       <Input
         id="description"
@@ -73,19 +79,17 @@ const NewPlace = () => {
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="Please enter a valid description (at least 5 characters)."
         onInput={inputHandler}
-        // onChange={() => {}}
       />
-      <Button
-        type="submit"
-        disabled={!formState.isValid}
-        onClick={undefined}
-        size={undefined}
-        href={undefined}
-        to={undefined}
-        inverse={undefined}
-        danger={undefined}
-        exact={undefined}
-      >
+      <Input
+        id="address"
+        element="input"
+        type="text"
+        label="Address"
+        validators={[VALIDATOR_REQUIRE()]}
+        errorText="Please enter a valid address."
+        onInput={inputHandler}
+      />
+      <Button type="submit" disabled={!formState.isValid}>
         ADD PLACE
       </Button>
     </form>
