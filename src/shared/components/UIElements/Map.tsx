@@ -8,7 +8,17 @@ declare global {
   }
 }
 
-const Map = ({ center, zoom, className, style }) => {
+interface MapProps {
+  center: {
+    lat: number;
+    lng: number;
+  };
+  zoom: number;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+const Map: React.FC<MapProps> = ({ center, zoom, className, style }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {

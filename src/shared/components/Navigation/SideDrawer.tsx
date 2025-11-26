@@ -4,7 +4,13 @@ import { CSSTransition } from "react-transition-group";
 
 import "./SideDrawer.css";
 
-const SideDrawer = ({ show, onClick, children }) => {
+interface SideDrawerProps {
+  show: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+const SideDrawer: React.FC<SideDrawerProps> = ({ show, onClick, children }) => {
   const nodeRef = useRef(null);
   const content = (
     <CSSTransition
@@ -20,7 +26,9 @@ const SideDrawer = ({ show, onClick, children }) => {
       </aside>
     </CSSTransition>
   );
-  return ReactDOM.createPortal(content, document.getElementById("drawer-hook"));
+
+  const drawerHook = document.getElementById("drawer-hook");
+  return drawerHook && ReactDOM.createPortal(content, drawerHook);
 };
 
 export default SideDrawer;

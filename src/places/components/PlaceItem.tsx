@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 
 import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
 import "./PlaceItem.css";
+import { PlaceItemProps } from "../../types";
 
-const PlaceItem = ({
+const PlaceItem: React.FC<PropsWithChildren<PlaceItemProps>> = ({
   id,
   imageUrl,
   title,
   description,
   address,
-  creatorId,
+  // creatorId,
   coordinates,
 }) => {
   const [showMap, setShowMap] = useState(false);

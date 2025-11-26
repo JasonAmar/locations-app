@@ -4,7 +4,14 @@ import "./UserItem.css";
 import Avatar from "../../shared/components/UIElements/Avatar";
 import Card from "../../shared/components/UIElements/Card";
 
-const UserItem = ({ id, name, image, places }) => {
+interface UserItemProps {
+  id: string;
+  name: string;
+  image: string;
+  places: number;
+}
+
+const UserItem: React.FC<UserItemProps> = ({ id, name, image, places }) => {
   return (
     <li className="user-item">
       <Card className="user-item__content">

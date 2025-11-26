@@ -26,7 +26,7 @@ const DUMMY_PLACES = [
 ];
 
 const UserPlaces = () => {
-  const userId = useParams().userId;
+  const { userId } = useParams<{ userId: string }>();
   const loadedPlaces = DUMMY_PLACES.filter(
     (place) => place.creatorId === userId
   );

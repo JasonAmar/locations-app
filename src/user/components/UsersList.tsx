@@ -2,7 +2,16 @@ import UserItem from "./UserItem";
 import Card from "../../shared/components/UIElements/Card";
 import "./UsersList.css";
 
-const UsersList = ({ items }) => {
+interface UsersListProps {
+  items: {
+    id: string;
+    name: string;
+    image: string;
+    places: number;
+  }[];
+}
+
+const UsersList: React.FC<UsersListProps> = ({ items }) => {
   if (items.length === 0) {
     return (
       <ul className="center">

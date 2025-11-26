@@ -1,6 +1,7 @@
+import { PropsWithChildren } from "react";
 import "./MainHeader.css";
 
-const MainHeader = ({ children }) => {
+const MainHeader: React.FC<PropsWithChildren> = ({ children }) => {
   return <header className="main-header">{children}</header>;
 };
 

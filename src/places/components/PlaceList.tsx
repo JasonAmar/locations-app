@@ -1,8 +1,13 @@
 import Card from "../../shared/components/UIElements/Card";
 import PlaceItem from "./PlaceItem";
 import "./PlaceList.css";
+import { PlaceItemProps } from "../../types";
 
-const PlaceList = ({ items }) => {
+interface PlaceListProps {
+  items: PlaceItemProps[];
+}
+
+const PlaceList: React.FC<PlaceListProps> = ({ items }) => {
   if (items.length === 0) {
     return (
       <div className="place-list center">
