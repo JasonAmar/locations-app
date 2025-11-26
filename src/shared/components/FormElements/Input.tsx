@@ -3,7 +3,7 @@ import { useReducer, useEffect } from "react";
 import { validate } from "../../util/validators";
 import "./Input.css";
 
-interface props {
+interface InputProps {
   id: string;
   element: "input" | "textarea";
   type?: string;
@@ -13,6 +13,8 @@ interface props {
   validators?: any[];
   errorText: string;
   onInput: (id: string, value: string, isValid: boolean) => void;
+  initialValue?: string;
+  initialValid?: boolean;
 }
 
 const inputReducer = (state: any, action: any) => {
@@ -34,7 +36,7 @@ const inputReducer = (state: any, action: any) => {
   }
 };
 
-const Input: React.FC<props> = ({
+const Input: React.FC<InputProps> = ({
   id,
   element,
   type,
@@ -44,11 +46,13 @@ const Input: React.FC<props> = ({
   validators,
   errorText,
   onInput,
+  initialValue = "",
+  initialValid = false,
 }) => {
   const [inputState, dispatch] = useReducer(inputReducer, {
-    value: "",
+    value: initialValue,
     isTouched: false,
-    isValid: false,
+    isValid: initialValid,
   });
 
   const { value, isValid } = inputState;
