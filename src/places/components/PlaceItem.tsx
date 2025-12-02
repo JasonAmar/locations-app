@@ -6,6 +6,7 @@ import Modal from "../../shared/components/UIElements/Modal";
 import Map from "../../shared/components/UIElements/Map";
 import "./PlaceItem.css";
 import { PlaceItemProps } from "../../types";
+import { useAuth } from "../../shared/context/auth-context";
 
 const PlaceItem: React.FC<PropsWithChildren<PlaceItemProps>> = ({
   id,
@@ -16,6 +17,7 @@ const PlaceItem: React.FC<PropsWithChildren<PlaceItemProps>> = ({
   // creatorId,
   coordinates,
 }) => {
+  const { isLoggedIn } = useAuth();
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -74,10 +76,12 @@ const PlaceItem: React.FC<PropsWithChildren<PlaceItemProps>> = ({
             <Button inverse onClick={() => setShowMap(true)}>
               VIEW ON MAP
             </Button>
-            <Button to={`/places/${id}`}>EDIT</Button>
-            <Button danger onClick={() => setShowConfirmModal(true)}>
-              DELETE
-            </Button>
+            {isLoggedIn && <Button to={`/places/${id}`}>EDIT</Button>}
+            {isLoggedIn && (
+              <Button danger onClick={() => setShowConfirmModal(true)}>
+                DELETE
+              </Button>
+            )}
           </div>
         </Card>
       </li>

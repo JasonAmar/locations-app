@@ -10,8 +10,10 @@ import {
 import { useForm } from "../../shared/hooks/form-hook";
 import "./Login.css";
 import Card from "../../shared/components/UIElements/Card";
+import { useAuth } from "../../shared/context/auth-context";
 
 const Login = () => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -48,6 +50,7 @@ const Login = () => {
     event.preventDefault();
     //login user
     console.log(formState.inputs);
+    login();
   };
 
   return (
