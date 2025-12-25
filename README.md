@@ -1,60 +1,14 @@
-# locations-app
+# locations-app 🗺️
 
-> A small React app to browse users and their saved places — a demo project.
+A small React app to browse users and their saved places — a demo project built with TypeScript and a simple Express backend for local development.
 
-## Table of Contents
+---
 
-- [About](#about)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Install](#install)
-  - [Run (development)](#run-development)
-  - [Build (production)](#build-production)
-- [Contributing](#contributing)
-- [License](#license)
-
-## About
-
-`locations-app` is a small client-side React application that displays users and their places. The repository contains a mix of JavaScript and TypeScript components and focuses on UI components for lists, navigation, forms, and a map view.
-
-## Features
-
-- Browse users and view their saved places
-- Add new places through a simple form (UI only)
-- Reusable UI components: cards, avatars, modal, map
-- Minimal, easy-to-read project structure suitable for learning and extension
-
-## Project Structure
-
-- `src/` — application source code
-  - `places/` — places pages and components (`PlaceList.js`, `PlaceItem.js`, `NewPlace.tsx`)
-  - `shared/` — shared UI, navigation, and form elements (e.g., `Map.tsx`, `Modal.tsx`, `Button.tsx`, `Input.tsx`)
-  - `user/` — user list and user-places pages
-  - `App.tsx`, `index.tsx` — app entry and routing
-- `public/` — static assets and HTML
-
-Key files:
-
-- `src/App.tsx` — main app component and routes
-- `src/index.tsx` — application bootstrap
-- `src/shared/components/UIElements/Map.tsx` — map UI component
-- `src/places/pages/NewPlace.tsx` — new place page (TypeScript)
-
-## Tech Stack
-
-- React
-- JavaScript and TypeScript mixed components
-- CSS for styling (component-level .css files)
-- Node.js / npm for package management and scripts
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js (recommend LTS) and npm installed. Verify with:
+- **Node.js** (LTS recommended) and **npm** installed. Verify:
 
 ```powershell
 node --version
@@ -63,50 +17,104 @@ npm --version
 
 ### Install
 
-Install dependencies from the project root:
+Install dependencies for both frontend and backend from the repo root:
 
 ```powershell
+# From project root
+cd backend
+npm install
+cd ../frontend
 npm install
 ```
 
 ### Run (development)
 
-Start the dev server (use the project's `start` or `dev` script):
+Open two terminals (or use a process manager) and start the servers:
 
 ```powershell
+# Terminal 1 - backend
+cd backend
+npm start
+
+# Terminal 2 - frontend
+cd frontend
 npm start
 ```
 
-If your `package.json` uses a `dev` script instead, run:
+- Frontend default: `http://localhost:3000`
+- Backend: runs via `nodemon server.ts` (see `backend/package.json`)
 
-```powershell
-npm run dev
-```
+> Tip: You can also run both with a small script or tools like `concurrently` if you prefer a single command.
 
-Open `http://localhost:3000` (or the port shown in terminal) to view the app.
+---
 
-### Build (production)
+## ✅ Features (current)
 
-Create an optimized production build:
+- Browse users and view their saved places
+- Add, update and list places (UI + client-side behavior)
+- Reusable UI components: cards, avatars, modal, map
+- Small, approachable codebase for learning and extension
 
-```powershell
-npm run build
-```
+---
 
-The output will be in the `build/` or `dist/` folder depending on your build setup.
+## 🧭 Planned Features (V2)
 
-## Contributing
+These are ideas planned for a later development phase — contributions welcome!
 
-Contributions are welcome. Suggested workflow:
+1. **Selecting a place on a map when adding places**
+
+   - Allow users to pick a location by clicking/tapping on an interactive map or dropping a pin while creating a place.
+   - Store latitude/longitude coordinates with each place and optionally reverse-geocode to suggest an address.
+   - UX: show a live map preview on the New Place form and allow fine-tuning the pin.
+
+2. **OAuth integration & “Continue as guest” mode**
+   - Add OAuth sign-in (Google/GitHub) to simplify authentication and onboarding.
+   - Provide a **Continue as guest** option for read-only browsing and limited interactions without creating an account.
+   - Plan: implement backend auth routes, session management, and guard write actions behind authenticated routes while offering public read access.
+
+---
+
+## 🏗️ Architecture & Decisions
+
+- **Frontend:** React + TypeScript. Organized into `places/`, `user/` and `shared/` components for clarity.
+- **Backend:** Minimal Express server (TypeScript) used for local development and simple API endpoints.
+- **Design choice:** Keep external dependencies minimal to make the project easy to read and modify.
+
+---
+
+## 🛠️ Tech Stack
+
+- React, TypeScript, React Router
+- Node.js, Express (TypeScript) for backend
+- CSS modules / component-level `.css` files for styling
+
+---
+
+## 🧪 Troubleshooting
+
+- If the frontend doesn't start, check that dependencies are installed in `frontend/` and that port `3000` is free.
+- If the backend fails to start, ensure `nodemon` and `ts-node` are installed (see `backend/package.json`).
+
+> If you see issues with CORS when connecting frontend <-> backend, consider adding a CORS middleware to `server.ts` during development.
+
+---
+
+## Contributing ✅
+
+Contributions are welcome! Suggested workflow:
 
 1. Fork the repo and create a feature branch.
-2. Implement your changes and add clear commit messages.
-3. Open a pull request describing the change and motivation.
+2. Implement changes and add tests where appropriate.
+3. Open a pull request describing motivation and changes.
 
-If you'd like help picking a small task, open an issue or message the maintainer.
+If you'd like help picking tasks, open an issue with the label **help wanted**.
+
+---
 
 ## License
 
-This project includes a `LICENSE` file in the repository root. Please refer to that file for licensing details.
+This project uses the `LICENSE` file in the repo root. Please refer to that file for full license text.
 
 ---
+
+_Made for learning and iterative improvements — contributions and suggestions are appreciated!_
