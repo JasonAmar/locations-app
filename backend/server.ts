@@ -4,6 +4,7 @@ import express, {
   type Response,
 } from 'express';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
 
 import placesRoutes from './routes/places-routes.ts';
 import userRoutes from './routes/users-routes.ts';
@@ -26,4 +27,11 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-app.listen(5000);
+mongoose
+  .connect('uri')
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
