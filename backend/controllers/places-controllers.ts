@@ -4,6 +4,7 @@ import { validationResult } from 'express-validator';
 
 import HttpError from '../models/http-error.ts';
 import { getCoordinatesForAddress } from '../util/location.ts';
+import Place from '../models/places.ts';
 
 const DUMMY_PLACES = [
   {
@@ -84,17 +85,24 @@ export const createPlace = async (
     return next(error);
   }
 
-  const createdPlace = {
-    id: uuid(),
+  const createdPlace = new Place({
     title,
     description,
-    imageUrl: imageUrl ?? '',
-    coordinates,
+    imageUrl,
     address,
+    coordinates,
     creatorId,
-  };
+  });
 
-  DUMMY_PLACES.push(createdPlace);
+  try {
+    await createdPlace.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Creating place failed, please try again.',
+      500
+    );
+    return next(error);
+  }
   res.status(201).json({ place: createdPlace });
 };
 
