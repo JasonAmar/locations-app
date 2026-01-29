@@ -22,17 +22,17 @@ router.post(
     check('description').isLength({ min: 5 }),
     check('address').notEmpty(),
   ],
-  createPlace
+  createPlace,
 );
 
 router.patch(
   '/:pid',
   [
-    check('title').notEmpty(),
-    check('description').isLength({ min: 5 }),
-    check('address').notEmpty(),
+    check('title').optional().notEmpty(),
+    check('description').optional().isLength({ min: 5 }),
+    check('address').optional().notEmpty(),
   ],
-  updatePlace
+  updatePlace,
 );
 
 router.delete('/:pid', deletePlace);

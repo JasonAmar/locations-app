@@ -1,78 +1,78 @@
-import { v4 as uuid } from 'uuid';
 import { type NextFunction, type Request, type Response } from 'express';
 import { validationResult } from 'express-validator';
 
 import HttpError from '../models/http-error.ts';
 import { getCoordinatesForAddress } from '../util/location.ts';
-import Place from '../models/places.ts';
+import PlaceEntity from '../models/places.ts';
 
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Empire State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu_%28cropped2%29.jpg/400px-View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu_%28cropped2%29.jpg',
-    address: '20 W 34th St, New York, NY 10001, United States',
-    coordinates: { lat: 40.7484405, lng: -73.9878584 },
-    creatorId: 'u1',
-  },
-  {
-    id: 'p2',
-    title: 'Emp. State Building',
-    description: 'One of the most famous sky scrapers in the world!',
-    imageUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu_%28cropped2%29.jpg/400px-View_of_Empire_State_Building_from_Rockefeller_Center_New_York_City_dllu_%28cropped2%29.jpg',
-    address: '20 W 34th St, New York, NY 10001, United States',
-    coordinates: { lat: 40.7484405, lng: -73.9878584 },
-    creatorId: 'u2',
-  },
-];
+//TODO: validate Ids are of proper format where applicable
+//otherwise they return 500 error instead of 404
 
 function removeNullUndefined(obj: Object) {
   return Object.fromEntries(Object.entries(obj).filter(([_, v]) => v != null));
 }
 
-export const getPlaceById = (
+export const getPlaceById = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const placeId = req.params.pid;
-  const place = DUMMY_PLACES.find((p) => p.id === placeId);
+  let place;
+  try {
+    place = await PlaceEntity.findById(placeId);
+  } catch (error) {
+    return next(
+      new HttpError('Something went wrong, could not find a place', 500),
+    );
+  }
 
   if (!place) {
     return next(
-      new HttpError('Could not find a place for the provided id.', 404)
+      new HttpError('Could not find a place for the provided id.', 404),
     );
   }
-  res.json({ place: { ...place } });
+  res.json({ place: place.toObject({ getters: true }) });
 };
 
-export const getPlacesByUserId = (
+export const getPlacesByUserId = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const userId = req.params.uid;
-  const places = DUMMY_PLACES.filter((p) => p.creatorId === userId);
-  if (!places || places.length === 0) {
+  if (!userId) {
+    return next(new HttpError('Invalid user id provided ', 400));
+  }
+
+  let places;
+  try {
+    places = await PlaceEntity.find({ creatorId: userId });
+  } catch (error) {
     return next(
-      new HttpError('Could not find any places for the provided user id.', 404)
+      new HttpError('Something went wrong, could not find places', 500),
     );
   }
-  res.json({ places: [...places] });
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError('Could not find any places for the provided user id.', 404),
+    );
+  }
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
 };
 
 export const createPlace = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError('Invalid inputs passed, please check your data', 422)
+      new HttpError('Invalid inputs passed, please check your data', 422),
     );
   }
 
@@ -85,7 +85,7 @@ export const createPlace = async (
     return next(error);
   }
 
-  const createdPlace = new Place({
+  const createdPlace = new PlaceEntity({
     title,
     description,
     imageUrl,
@@ -99,17 +99,17 @@ export const createPlace = async (
   } catch (err) {
     const error = new HttpError(
       'Creating place failed, please try again.',
-      500
+      500,
     );
     return next(error);
   }
   res.status(201).json({ place: createdPlace });
 };
 
-export const updatePlace = (
+export const updatePlace = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   //TODO: Check auth header to see if user has authority to update item
   //If not, then throw unauthorized error
@@ -117,19 +117,11 @@ export const updatePlace = (
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(
-      new HttpError('Invalid inputs passed, please check your data', 422)
+      new HttpError('Invalid inputs passed, please check your data', 422),
     );
   }
 
   const placeId = req.params.pid;
-  const oldPlace = DUMMY_PLACES.find((p) => p.id === placeId);
-
-  if (!oldPlace) {
-    return next(
-      new HttpError('Could not find a place for the provided id.', 404)
-    );
-  }
-
   const userSubmittedPlace = (({
     title,
     description,
@@ -139,35 +131,52 @@ export const updatePlace = (
   }) => ({ title, description, imageUrl, coordinates, address }))(req.body);
 
   const updatedPlace = {
-    ...oldPlace,
     ...removeNullUndefined(userSubmittedPlace),
   };
 
-  const index = DUMMY_PLACES.findIndex((p) => p.id === placeId);
+  let place;
+  try {
+    place = await PlaceEntity.findByIdAndUpdate(placeId, updatedPlace, {
+      new: true,
+    });
+  } catch (err) {
+    return next(
+      new HttpError('Something went wrong, could not update place.', 500),
+    );
+  }
 
-  //will update DB in the future
-  //@ts-ignore
-  DUMMY_PLACES[index] = updatedPlace;
-  res.json({ place: updatedPlace });
+  if (!place) {
+    return next(
+      new HttpError('Could not find a place for the provided id.', 404),
+    );
+  }
+
+  res.json({ place: place?.toObject({ getters: true }) });
 };
 
-export const deletePlace = (
+export const deletePlace = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   //TODO: Check auth header to see if user has authority to delete item
   //If not, then throw unauthorized error
 
-  const index = DUMMY_PLACES.findIndex((p) => p.id === req.params.pid);
-
-  if (index <= -1) {
+  const placeId = req.params.pid;
+  let place;
+  try {
+    place = await PlaceEntity.findByIdAndDelete(placeId);
+  } catch (err) {
     return next(
-      new HttpError('Could not find a place for the provided id.', 404)
+      new HttpError('Something went wrong, could not delete place.', 500),
     );
   }
 
-  //will delete from DB in the future
-  DUMMY_PLACES.splice(index, 1);
+  if (!place) {
+    return next(
+      new HttpError('Could not find a place for the provided id.', 404),
+    );
+  }
+
   res.status(204).json({});
 };

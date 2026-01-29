@@ -15,17 +15,19 @@ const app = express();
 app.use(bodyParser.json());
 app.use('/api/places', placesRoutes);
 app.use('/api/users', userRoutes);
-app.use((req: Request, res: Response, next: NextFunction) => {
+app.use((_req: Request, _res: Response, _next: NextFunction) => {
   throw new HttpError('Could not find this route.', 404);
 });
-app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
+app.use(
+  (error: HttpError, _req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {
     return next(error);
   }
 
-  res.status(error?.code ?? 500);
+    res.status(error.code);
   res.json({ message: error.message || 'An unknown error occurred!' });
-});
+  },
+);
 
 mongoose
   .connect('uri')
